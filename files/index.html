@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1c2630">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fitness">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Suivi des ventes – Fitness</title>
+<style>
+:root{--bg:#eceef0;--card:#fff;--ink:#1c2630;--mute:#66727e;--line:#d5dade;--acc:#1f5fbf;--ok:#1f7a4d;--okbg:#dff3e8;--wait:#a35f00;--waitbg:#fdebc8;--danger:#b3261e;--kobg:#fbe0de}
+@media (prefers-color-scheme:dark){:root{--bg:#161b21;--card:#1f262d;--ink:#e8ecef;--mute:#92a0ac;--line:#33404b;--acc:#6ba3f5;--ok:#6fd3a0;--okbg:#1d3a2b;--wait:#f0b45a;--waitbg:#3d2f14;--danger:#f08a84;--kobg:#42201e}}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+header{padding:30px clamp(14px,4vw,40px) 26px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;color:#fff;background-color:rgba(14,24,44,.6);backdrop-filter:blur(3px);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 120'><g fill='%23ffffff' fill-opacity='.14'><rect x='0' y='55' width='600' height='10' rx='3'/><rect x='46' y='46' width='10' height='28' rx='2'/><rect x='60' y='10' width='26' height='100' rx='6'/><rect x='92' y='22' width='20' height='76' rx='5'/><rect x='118' y='34' width='14' height='52' rx='4'/><rect x='468' y='34' width='14' height='52' rx='4'/><rect x='488' y='22' width='20' height='76' rx='5'/><rect x='514' y='10' width='26' height='100' rx='6'/><rect x='544' y='46' width='10' height='28' rx='2'/></g></svg>");background-repeat:no-repeat;background-position:right 24px center;background-size:auto 120%;border-bottom:4px solid var(--acc)}
+header h1 small{color:#b4c1cc}
+h1{margin:0;font-size:clamp(22px,4vw,30px);letter-spacing:-.01em}
+h1 small{display:block;font-size:13px;font-weight:400;color:var(--mute);letter-spacing:0}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-width:92px}
+.stat b{display:block;font-size:22px;line-height:1.1}
+.stat span{font-size:12.5px;color:var(--mute)}
+.stat.ok b{color:var(--ok)}.stat.wait b{color:var(--wait)}
+main{padding:12px clamp(14px,4vw,40px) 50px;display:grid;gap:18px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.panel h2{margin:0 0 12px;font-size:16px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+textarea{resize:vertical;min-height:62px}
+.wide{grid-column:1/-1}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.check{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-size:15px}
+.check input{width:20px;height:20px;accent-color:var(--ok)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px}
+button.primary{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+button.small{padding:4px 10px;font-size:13px}
+button.del{color:var(--danger)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tools input,.tools select{width:auto;flex:1 1 170px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:860px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--mute);font-weight:600;white-space:nowrap}
+td.n{white-space:pre-wrap;max-width:260px}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:13px;font-weight:600;border:0;cursor:pointer}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.wait{background:var(--waitbg);color:var(--wait)}.tag.ko{background:var(--kobg);color:var(--danger)}
+.univ{font-weight:600}
+a{color:var(--acc)}
+.empty{padding:26px;text-align:center;color:var(--mute)}
+.mute{color:var(--mute);font-size:13px}
+body{background-color:#2a2a6e;background-image:var(--bgimg,none),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900' preserveAspectRatio='xMidYMid slice'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%230f2a5c'/><stop offset='.5' stop-color='%234b2a8f'/><stop offset='1' stop-color='%23e8590c'/></linearGradient></defs><rect width='1600' height='900' fill='url(%23g)'/><circle cx='1380' cy='170' r='200' fill='%23ffd166' fill-opacity='.2'/><circle cx='1380' cy='170' r='150' fill='none' stroke='%23ffd166' stroke-opacity='.4' stroke-width='14'/><circle cx='1380' cy='170' r='36' fill='%23ffd166' fill-opacity='.35'/><circle cx='120' cy='780' r='230' fill='%2306d6a0' fill-opacity='.16'/><circle cx='120' cy='780' r='170' fill='none' stroke='%2306d6a0' stroke-opacity='.4' stroke-width='14'/><g transform='translate(330 250) rotate(-18) scale(1.3)'><rect x='-130' y='-8' width='260' height='16' fill='%23d5deea'/><rect x='-172' y='-62' width='36' height='124' rx='10' fill='%23ffb703'/><rect x='-204' y='-44' width='28' height='88' rx='8' fill='%23fb5607'/><rect x='136' y='-62' width='36' height='124' rx='10' fill='%23ffb703'/><rect x='176' y='-44' width='28' height='88' rx='8' fill='%23fb5607'/></g><g transform='translate(1250 570) rotate(22) scale(1.1)'><rect x='-130' y='-8' width='260' height='16' fill='%23d5deea'/><rect x='-172' y='-62' width='36' height='124' rx='10' fill='%2306d6a0'/><rect x='-204' y='-44' width='28' height='88' rx='8' fill='%233a86ff'/><rect x='136' y='-62' width='36' height='124' rx='10' fill='%2306d6a0'/><rect x='176' y='-44' width='28' height='88' rx='8' fill='%233a86ff'/></g><g transform='translate(700 800) rotate(-8) scale(0.8)'><rect x='-130' y='-8' width='260' height='16' fill='%23d5deea'/><rect x='-172' y='-62' width='36' height='124' rx='10' fill='%23ff4d6d'/><rect x='-204' y='-44' width='28' height='88' rx='8' fill='%23ffd166'/><rect x='136' y='-62' width='36' height='124' rx='10' fill='%23ff4d6d'/><rect x='176' y='-44' width='28' height='88' rx='8' fill='%23ffd166'/></g><g transform='translate(1020 740) scale(.9)'><path d='M-50,-70 C-50,-175 50,-175 50,-70' fill='none' stroke='%23ff4d6d' stroke-width='26' stroke-linecap='round'/><circle r='90' fill='%23ff4d6d'/><circle cx='-30' cy='-30' r='22' fill='%23ffffff' fill-opacity='.28'/></g></svg>");background-size:cover;background-position:center;background-attachment:fixed;background-repeat:no-repeat}
+</style>
+</head>
+<body>
+<header>
+  <h1>Suivi des ventes <small>Machines fitness : ventes, suivi et livraison</small></h1>
+  <div class="stats">
+    <div class="stat"><b id="sTotal">0</b><span>Ventes</span></div>
+    <div class="stat ok"><b id="sOk">0</b><span>Livrées</span></div>
+    <div class="stat wait"><b id="sWait">0</b><span>À livrer</span></div>
+    <div class="stat"><b id="sRet">0</b><span>Retours</span></div>
+  </div>
+</header>
+
+<main>
+  <section class="panel">
+    <h2 id="formTitle">Nouvelle vente</h2>
+    <form id="f">
+      <label>Univers
+        <input name="univers" list="univList" required placeholder="Ex : Musculation">
+        <datalist id="univList"></datalist>
+      </label>
+      <label>Date de vente
+        <input type="date" name="date" required>
+      </label>
+      <label>Client
+        <input name="client" required placeholder="Nom du client">
+      </label>
+      <label>Numéro de téléphone
+        <input name="tel" type="tel" inputmode="tel" placeholder="06 12 34 56 78">
+      </label>
+      <label class="wide">Articles
+        <textarea name="articles" required placeholder="Ex : 1 tapis de course, 2 haltères 10 kg"></textarea>
+      </label>
+      <label class="wide">Suivi
+        <textarea name="suivi" placeholder="Ex : acompte reçu, rappel client le 12, installation prévue…"></textarea>
+      </label>
+      <label class="check"><input type="checkbox" name="livre"> Livrée</label>
+      <div class="row wide">
+        <button class="primary" type="submit" id="saveBtn">Enregistrer la vente</button>
+        <button type="button" id="cancelBtn" hidden>Annuler la modification</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Ventes enregistrées</h2>
+    <div class="tools">
+      <input id="q" type="search" placeholder="Rechercher (client, téléphone, article…)">
+      <select id="fU"><option value="">Tous les univers</option></select>
+      <select id="fS">
+        <option value="">Livrées et à livrer</option>
+        <option value="0">À livrer</option>
+        <option value="1">Livrées</option>
+      </select>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Date</th><th>Univers</th><th>Client</th><th>Téléphone</th><th>Articles</th><th>Suivi</th><th>Statut</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>Aucune vente. Remplissez le formulaire ci-dessus pour ajouter la première.</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 id="rTitle">Traitement des retours</h2>
+    <form id="rf">
+      <label class="wide">Vente concernée (facultatif : remplit client et articles)
+        <select name="vente"></select>
+      </label>
+      <label>Client
+        <input name="client" required placeholder="Nom du client">
+      </label>
+      <label class="wide">Articles retournés
+        <textarea name="articles" required placeholder="Ex : 1 tapis de course"></textarea>
+      </label>
+      <label>Date de retour
+        <input type="date" name="date" required>
+      </label>
+      <label>Nature du retour
+        <select name="nature" required>
+          <option value="">Choisir…</option>
+          <option>Échange</option>
+          <option>Réparation</option>
+          <option>Remboursement</option>
+        </select>
+      </label>
+      <label>Traité par
+        <input name="par" list="parList" required placeholder="Nom de la personne">
+        <datalist id="parList"></datalist>
+      </label>
+      <label class="check"><input type="checkbox" name="ok"> Traitement OK</label>
+      <div class="row wide">
+        <button class="primary" type="submit" id="rSaveBtn">Enregistrer le retour</button>
+        <button type="button" id="rCancelBtn" hidden>Annuler la modification</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Retours enregistrés</h2>
+    <div class="tools">
+      <select id="rfN">
+        <option value="">Toutes les natures</option>
+        <option>Échange</option>
+        <option>Réparation</option>
+        <option>Remboursement</option>
+      </select>
+      <select id="rfS">
+        <option value="">OK et non OK</option>
+        <option value="1">OK</option>
+        <option value="0">Non OK</option>
+      </select>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Date de retour</th><th>Client</th><th>Articles</th><th>Nature</th><th>Traité par</th><th>Résultat</th><th></th></tr></thead>
+        <tbody id="rRows"></tbody>
+      </table>
+      <div class="empty" id="rEmpty" hidden></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Sauvegarde</h2>
+    <p class="mute">Les données restent dans ce navigateur, sur cet appareil. Exportez régulièrement une sauvegarde pour ne rien perdre.</p>
+    <div class="row">
+      <button id="expCsv">Exporter les ventes (CSV)</button>
+      <button id="expCsvR">Exporter les retours (CSV)</button>
+      <button id="expJson">Sauvegarder (JSON)</button>
+      <button id="impJson">Restaurer une sauvegarde</button>
+      <input type="file" id="file" accept=".json,application/json" hidden>
+    </div>
+    <p class="mute" style="margin-top:16px">Image de fond : choisissez une photo de votre appareil (par exemple une image de salle de sport téléchargée depuis Google Images).</p>
+    <div class="row">
+      <button id="bgBtn">Changer l’image de fond</button>
+      <button id="bgReset">Image par défaut</button>
+      <input type="file" id="bgFile" accept="image/*" hidden>
+    </div>
+  </section>
+</main>
+
+<script>
+const KEY='suivi-ventes-fitness-v1';
+const DEFAULT_UNIVERS=['Musculation','Cardio','Fitness','Accessoires'];
+let data=[];let editId=null;
+try{data=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){data=[]}
+const $=id=>document.getElementById(id);
+const f=$('f');
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Impossible d’enregistrer dans ce navigateur. Utilisez « Sauvegarder (JSON) ».")}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmtDate(d){if(!d)return'';const [y,m,j]=d.split('-');return `${j}/${m}/${y}`}
+function wa(t){let n=String(t||'').replace(/\D/g,'');if(n.startsWith('00'))n=n.slice(2);else if(n.startsWith('0'))n='212'+n.slice(1);return n}
+function univers(){return [...new Set([...DEFAULT_UNIVERS,...data.map(d=>d.univers)])].sort((a,b)=>a.localeCompare(b,'fr'))}
+function refreshUniv(){
+  const list=univers();
+  $('univList').innerHTML=list.map(u=>`<option value="${esc(u)}">`).join('');
+  const cur=$('fU').value;
+  $('fU').innerHTML='<option value="">Tous les univers</option>'+list.map(u=>`<option ${u===cur?'selected':''}>${esc(u)}</option>`).join('');
+}
+function render(){
+  refreshUniv();
+  const q=$('q').value.trim().toLowerCase(),u=$('fU').value,s=$('fS').value;
+  const rows=data.filter(d=>(!u||d.univers===u)&&(!s||String(+d.livre)===s)&&(!q||[d.client,d.tel,d.articles,d.suivi,d.univers].join(' ').toLowerCase().includes(q)))
+    .sort((a,b)=>b.date.localeCompare(a.date));
+  $('rows').innerHTML=rows.map(d=>`<tr>
+    <td>${fmtDate(d.date)}</td>
+    <td class="univ">${esc(d.univers)}</td>
+    <td>${esc(d.client)}</td>
+    <td>${d.tel?`<a href="tel:${esc(d.tel)}">${esc(d.tel)}</a><br><a class="mute" href="https://wa.me/${wa(d.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}</td>
+    <td class="n">${esc(d.articles)}</td>
+    <td class="n">${esc(d.suivi)}</td>
+    <td><button class="tag ${d.livre?'ok':'wait'}" data-a="tog" data-id="${d.id}" title="Cliquer pour changer le statut">${d.livre?'Livrée':'À livrer'}</button></td>
+    <td><div class="row"><button class="small" data-a="edit" data-id="${d.id}">Modifier</button><button class="small del" data-a="del" data-id="${d.id}">Supprimer</button></div></td>
+  </tr>`).join('');
+  $('empty').hidden=rows.length>0;
+  if(data.length&&!rows.length)$('empty').textContent='Aucune vente ne correspond à votre recherche.';
+  else $('empty').textContent='Aucune vente. Remplissez le formulaire ci-dessus pour ajouter la première.';
+  $('sTotal').textContent=data.length;
+  $('sOk').textContent=data.filter(d=>d.livre).length;
+  $('sWait').textContent=data.filter(d=>!d.livre).length;
+  refreshVenteSelect();renderR();
+}
+function resetForm(){f.reset();f.date.value=new Date().toISOString().slice(0,10);editId=null;$('formTitle').textContent='Nouvelle vente';$('saveBtn').textContent='Enregistrer la vente';$('cancelBtn').hidden=true}
+f.addEventListener('submit',e=>{
+  e.preventDefault();
+  const rec={univers:f.univers.value.trim(),date:f.date.value,client:f.client.value.trim(),tel:f.tel.value.trim(),articles:f.articles.value.trim(),suivi:f.suivi.value.trim(),livre:f.livre.checked};
+  if(editId){const i=data.findIndex(d=>d.id===editId);data[i]={...data[i],...rec}}
+  else data.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),...rec});
+  save();resetForm();render();
+});
+$('cancelBtn').onclick=resetForm;
+$('rows').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-a]');if(!b)return;
+  const d=data.find(x=>x.id===b.dataset.id);if(!d)return;
+  if(b.dataset.a==='tog'){d.livre=!d.livre;save();render()}
+  else if(b.dataset.a==='del'){if(confirm(`Supprimer la vente de ${d.client} ?`)){data=data.filter(x=>x.id!==d.id);save();render()}}
+  else if(b.dataset.a==='edit'){
+    editId=d.id;for(const k of ['univers','date','client','tel','articles','suivi'])f[k].value=d[k];f.livre.checked=d.livre;
+    $('formTitle').textContent='Modifier la vente';$('saveBtn').textContent='Enregistrer les modifications';$('cancelBtn').hidden=false;
+    f.scrollIntoView({behavior:'smooth',block:'start'});f.client.focus();
+  }
+});
+['q','fU','fS'].forEach(id=>$(id).addEventListener('input',render));
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$('expCsv').onclick=()=>{
+  const cols=['Univers','Date de vente','Client','Téléphone','Articles','Suivi','Livrée'];
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const lines=[cols.map(q).join(';'),...data.map(d=>[d.univers,fmtDate(d.date),d.client,d.tel,d.articles,d.suivi,d.livre?'Oui':'Non'].map(q).join(';'))];
+  download('ventes-fitness.csv','\ufeff'+lines.join('\r\n'),'text/csv;charset=utf-8');
+};
+$('expJson').onclick=()=>download('sauvegarde-ventes-fitness.json',JSON.stringify({ventes:data,retours},null,2),'application/json');
+$('impJson').onclick=()=>$('file').click();
+$('file').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const j=JSON.parse(r.result);const arr=Array.isArray(j)?j:j.ventes;const ret=Array.isArray(j)?null:(j.retours||[]);if(!Array.isArray(arr))throw 0;
+    if(confirm(`Remplacer les ventes et retours actuels par ${arr.length} ventes${ret?` et ${ret.length} retours`:''} de la sauvegarde ?`)){data=arr;save();if(ret){retours=ret;saveR()}render()}
+  }catch(_){alert("Ce fichier n’est pas une sauvegarde valide.")}e.target.value=''};
+  r.readAsText(file);
+});
+/* ---------- Retours ---------- */
+const KEYR='suivi-retours-fitness-v1';
+let retours=[];try{retours=JSON.parse(localStorage.getItem(KEYR)||'[]')}catch(e){retours=[]}
+let editR=null;
+const rf=$('rf');
+function saveR(){try{localStorage.setItem(KEYR,JSON.stringify(retours))}catch(e){alert("Impossible d’enregistrer dans ce navigateur. Utilisez « Sauvegarder (JSON) ».")}}
+function venteLabel(d){const a=String(d.articles).replace(/\s+/g,' ');return `${d.client} – ${a.length>40?a.slice(0,40)+'…':a} (${fmtDate(d.date)})`}
+function refreshVenteSelect(){
+  const cur=rf.vente.value;
+  const opts=[...data].sort((a,b)=>b.date.localeCompare(a.date));
+  rf.vente.innerHTML='<option value="">Aucune (saisie manuelle)</option>'+opts.map(d=>`<option value="${esc(d.id)}">${esc(venteLabel(d))}</option>`).join('');
+  rf.vente.value=cur;
+}
+function renderR(){
+  const n=$('rfN').value,s=$('rfS').value;
+  const rows=retours.filter(r=>(!n||r.nature===n)&&(!s||String(+r.ok)===s)).sort((a,b)=>b.date.localeCompare(a.date));
+  $('rRows').innerHTML=rows.map(r=>{
+    const v=data.find(d=>d.id===r.venteId);
+    return `<tr>
+      <td>${fmtDate(r.date)}</td>
+      <td>${esc(r.client)}</td>
+      <td class="n">${esc(r.articles)}</td>
+      <td class="univ">${esc(r.nature)}</td>
+      <td>${esc(r.par)}</td>
+      <td><button class="tag ${r.ok?'ok':'ko'}" data-a="rtog" data-id="${r.id}" title="Cliquer pour changer le résultat">${r.ok?'OK':'Non OK'}</button></td>
+      <td><div class="row"><button class="small" data-a="redit" data-id="${r.id}">Modifier</button><button class="small del" data-a="rdel" data-id="${r.id}">Supprimer</button></div></td>
+    </tr>`}).join('');
+  $('rEmpty').hidden=rows.length>0;
+  $('rEmpty').textContent=retours.length?'Aucun retour ne correspond au filtre.':'Aucun retour. Remplissez le formulaire ci-dessus pour enregistrer le premier.';
+  $('parList').innerHTML=[...new Set(retours.map(r=>r.par))].sort((a,b)=>a.localeCompare(b,'fr')).map(x=>`<option value="${esc(x)}">`).join('');
+  $('sRet').textContent=retours.length;
+}
+function resetR(){rf.reset();rf.date.value=new Date().toISOString().slice(0,10);editR=null;$('rTitle').textContent='Traitement des retours';$('rSaveBtn').textContent='Enregistrer le retour';$('rCancelBtn').hidden=true;refreshVenteSelect()}
+rf.addEventListener('submit',e=>{
+  e.preventDefault();
+  const v=data.find(d=>d.id===rf.vente.value);
+  const old=editR?retours.find(r=>r.id===editR):null;
+  const rec={venteId:rf.vente.value,client:rf.client.value.trim(),articles:rf.articles.value.trim(),date:rf.date.value,nature:rf.nature.value,par:rf.par.value.trim(),ok:rf.ok.checked};
+  if(old)Object.assign(old,rec);
+  else retours.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),...rec});
+  saveR();resetR();renderR();
+});
+$('rCancelBtn').onclick=resetR;
+rf.vente.addEventListener('change',()=>{const v=data.find(d=>d.id===rf.vente.value);if(v){rf.client.value=v.client;rf.articles.value=v.articles}});
+$('rRows').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-a]');if(!b)return;
+  const r=retours.find(x=>x.id===b.dataset.id);if(!r)return;
+  if(b.dataset.a==='rtog'){r.ok=!r.ok;saveR();renderR()}
+  else if(b.dataset.a==='rdel'){if(confirm('Supprimer ce retour ?')){retours=retours.filter(x=>x.id!==r.id);saveR();renderR()}}
+  else if(b.dataset.a==='redit'){
+    editR=r.id;
+    refreshVenteSelect();
+    rf.vente.value=r.venteId;rf.client.value=r.client;rf.articles.value=r.articles;rf.date.value=r.date;rf.nature.value=r.nature;rf.par.value=r.par;rf.ok.checked=r.ok;
+    $('rTitle').textContent='Modifier le retour';$('rSaveBtn').textContent='Enregistrer les modifications';$('rCancelBtn').hidden=false;
+    rf.scrollIntoView({behavior:'smooth',block:'start'});rf.nature.focus();
+  }
+});
+['rfN','rfS'].forEach(id=>$(id).addEventListener('input',renderR));
+$('expCsvR').onclick=()=>{
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const lines=[['Date de retour','Client','Articles','Nature','Traité par','Résultat'].map(q).join(';'),...retours.map(r=>{return [fmtDate(r.date),r.client,r.articles,r.nature,r.par,r.ok?'OK':'Non OK'].map(q).join(';')})];
+  download('retours-fitness.csv','\ufeff'+lines.join('\r\n'),'text/csv;charset=utf-8');
+};
+/* ---------- Image de fond ---------- */
+const KEYBG='suivi-fond-fitness-v1';
+function applyBg(u){document.body.style.setProperty('--bgimg',u?`url("${u}")`:'none')}
+try{applyBg(localStorage.getItem(KEYBG))}catch(e){}
+$('bgBtn').onclick=()=>$('bgFile').click();
+$('bgFile').addEventListener('change',e=>{
+  const fl=e.target.files[0];if(!fl)return;
+  const img=new Image(),url=URL.createObjectURL(fl);
+  img.onload=()=>{
+    const k=Math.min(1,1600/Math.max(img.width,img.height));
+    const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    const d=c.toDataURL('image/jpeg',.8);URL.revokeObjectURL(url);
+    try{localStorage.setItem(KEYBG,d)}catch(_){alert("Image trop lourde pour être enregistrée. Essayez une image plus petite.")}
+    applyBg(d);
+  };
+  img.onerror=()=>alert("Ce fichier n’est pas une image valide.");
+  img.src=url;e.target.value='';
+});
+$('bgReset').onclick=()=>{try{localStorage.removeItem(KEYBG)}catch(_){}applyBg(null)};
+resetForm();resetR();render();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
